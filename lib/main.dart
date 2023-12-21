@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    //
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -31,17 +33,32 @@ class SensorApp extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Positioned(
-            left: centerX,
-            top: centerY,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-              ),
-              width: 100,
-              height: 100,
-            ),
+          StreamBuilder<AccelerometerEvent>(
+            stream: accelerometerEvents,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData){
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              final event = snapshot.data!;
+              List<double> accelerometerValues = [event.x,event.y,event.z];
+              print(accelerometerValues);
+
+              return Positioned(
+                left: centerX,
+                top: centerY,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                  ),
+                  width: 100,
+                  height: 100,
+                ),
+              );
+            }
           ),
         ],
       ),
